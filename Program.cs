@@ -1,15 +1,15 @@
 ﻿using ClosedXML.Excel;
 
-const string vlookup_workbook = @"C:\Users\Jonathan.Linstead\OneDrive - Devon County Council\EUCSharepoint\Mobile Phones\iPad for reuse and disposal.xlsx";
-const string vSearch_workbook = @"C:\Users\Jonathan.Linstead\Downloads\CI List2023_08_8_09_16_04.xlsx";
+const string vlookup_workbook = @"C:\temp\disposals.xlsx";
+const string vSearch_workbook = @"C:\temp\CI List2023_10_10_13_14_47.xlsx";
 
-const string lookup_worksheet = "Sheet1";
-Range lookup = new(2, 13, 15); // Column to lookup, Start Row, End Row
-const int output_column = 12; 
+const string lookup_worksheet = "disposals";
+Range lookup = new(1, 2, 39); // Column to lookup (A = 1), Start Row, End Row
+const int output_column = 10; 
 
 const string search_worksheet = "Data";
-Range search = new(11, 56, 58);  // Column to search, Start Row, End Row
-const int result_column = 4;
+Range search = new(4, 2, 4650);  // Column to search, Start Row, End Row
+const int result_column = 2;
 bool deleteUnmatchRows = false;
 bool deleteOnly = false;
 
@@ -22,6 +22,12 @@ IXLWorksheet searchWorksheet = searchBook.Worksheet(search_worksheet);
 Console.WriteLine( "Look Column: {0}",lookupWorksheet.Cell(1, lookup.Column).Value.ToString());
 Console.WriteLine( "Search Column: {0}",searchWorksheet.Cell(1, search.Column).Value.ToString());
 Console.WriteLine( "Result Column: {0}",searchWorksheet.Cell(1, result_column).Value.ToString());
+
+Console.WriteLine("Are these the correct columns? (y/n)");
+var yn = Console.ReadKey();
+
+if (yn.Key.ToString()  == "n" || yn.Key.ToString() == "N" || yn.Key == ConsoleKey.Escape)        
+    return;
 
 for (int row = lookup.EndRow; row > lookup.StartRow - 1; row--)
 {
