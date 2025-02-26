@@ -1,0 +1,14 @@
+{
+  "LookupWorkbook": "C:\\temp\\SR225316 CIs.xlsx",
+  "LookupWorksheet": "Data",
+  "LookupColumn": "D",
+  "LookupOutputColumn": "M",
+  "LookupStartRow": 2,
+  "LookupEndRow": 186,
+  "SearchWorkbook": "C:\\temp\\SR225316 Knox Full List.xlsx",
+  "SearchWorksheet": "SR225316",
+  "SearchColumn": "B",
+  "SearchResultColumn": "A",
+  "SearchStartRow": 2,
+  "SearchEndRow": 3169
+}
