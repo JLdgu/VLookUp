@@ -1,9 +1,18 @@
 ﻿using ClosedXML.Excel;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 using System.Text.Json;
 using VLookUp;
 
 bool deleteUnmatchRows = false;
 bool deleteOnly = false;
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
+    .WriteTo.File("vlookup.log")
+    .MinimumLevel.Debug()
+    .CreateLogger();
 
 string fileName = "parameters.json";
 string jsonString = File.ReadAllText(fileName);
@@ -20,12 +29,12 @@ try
     IXLWorksheet lookupWorksheet = workbook.Worksheet(parameters.LookupWorksheet);
     IXLWorksheet searchWorksheet = searchBook.Worksheet(parameters.SearchWorksheet);
 
-    Console.WriteLine("Search spreadsheet last row used {0}", lookupWorksheet.LastRowUsed());
+    Log.Information("Search spreadsheet last row used {0}", lookupWorksheet.LastRowUsed());
 
-    Console.WriteLine("Look Column: {0}", lookupWorksheet.Cell(1, parameters.LookupColumn).Value.ToString());
-    Console.WriteLine("Output Column: {0}", lookupWorksheet.Cell(1, parameters.LookupOutputColumn).Value.ToString());
-    Console.WriteLine("Search Column: {0}", searchWorksheet.Cell(1, parameters.SearchColumn).Value.ToString());
-    Console.WriteLine("Result Column: {0}", searchWorksheet.Cell(1, parameters.SearchResultColumn).Value.ToString());
+    Log.Information("Look Column: {0}", lookupWorksheet.Cell(1, parameters.LookupColumn).Value.ToString());
+    Log.Information("Output Column: {0}", lookupWorksheet.Cell(1, parameters.LookupOutputColumn).Value.ToString());
+    Log.Information("Search Column: {0}", searchWorksheet.Cell(1, parameters.SearchColumn).Value.ToString());
+    Log.Information("Result Column: {0}", searchWorksheet.Cell(1, parameters.SearchResultColumn).Value.ToString());
 
     Console.WriteLine("Are these the correct columns? (y/n)");
     var yn = Console.ReadKey();
@@ -60,9 +69,9 @@ try
         return null;
     }
 }
-catch (Exception)
+catch (Exception ex)
 {
-    Console.WriteLine("Unable to parse all Json parameters");
+    Log.Fatal(exception: ex, "Unhandled exception:");
     return;
 }
 
