@@ -1,14 +1,16 @@
 {
-  "LookupWorkbook": "C:\\temp\\SR225316 CIs.xlsx",
-  "LookupWorksheet": "Data",
-  "LookupColumn": "D",
-  "LookupOutputColumn": "M",
-  "LookupStartRow": 2,
-  "LookupEndRow": 186,
-  "SearchWorkbook": "C:\\temp\\SR225316 Knox Full List.xlsx",
-  "SearchWorksheet": "SR225316",
-  "SearchColumn": "B",
-  "SearchResultColumn": "A",
-  "SearchStartRow": 2,
-  "SearchEndRow": 3169
+  "LookupWorkbook": "c:/temp/ABM Devices to be Reset.xlsx",
+  "LookupWorksheet": "Unassigned",
+  "LookupColumn": "B",
+  "LookupOutputColumn": "D",
+  "LookupWorksheetHasHeader": true,
+  "LookupStartRow": 0,
+  "LookupEndRow": 0,
+  "SearchWorkbook": "C:/temp/CI List2025_22_9_11_45_02.xlsx",
+  "SearchWorksheet": "Data",
+  "SearchColumn": "D",
+  "SearchResultColumn": "L",
+  "SearchWorksheetHasHeader": true,
+  "SearchStartRow": 0,
+  "SearchEndRow": 0
 }

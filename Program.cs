@@ -23,25 +23,67 @@ try
 
     if (parameters == null) return; // Serialize will throw exception if expected parameters are missing
 
+    if (!File.Exists(parameters.LookupWorkbook))
+    {
+        Log.Error("Lookup workbook {0} not found", parameters.LookupWorkbook);
+        return;
+    }
+    if (!File.Exists(parameters.SearchWorkbook))
+    {
+        Log.Error("Search workbook {0} not found", parameters.SearchWorkbook);
+        return;
+    }
     using XLWorkbook workbook = new(parameters.LookupWorkbook);
     using XLWorkbook searchBook = new(parameters.SearchWorkbook);
 
     IXLWorksheet lookupWorksheet = workbook.Worksheet(parameters.LookupWorksheet);
-    IXLWorksheet searchWorksheet = searchBook.Worksheet(parameters.SearchWorksheet);
-
-    Log.Information("Search spreadsheet last row used {0}", lookupWorksheet.LastRowUsed());
-
-    Log.Information("Look Column: {0}", lookupWorksheet.Cell(1, parameters.LookupColumn).Value.ToString());
-    Log.Information("Output Column: {0}", lookupWorksheet.Cell(1, parameters.LookupOutputColumn).Value.ToString());
-    Log.Information("Search Column: {0}", searchWorksheet.Cell(1, parameters.SearchColumn).Value.ToString());
-    Log.Information("Result Column: {0}", searchWorksheet.Cell(1, parameters.SearchResultColumn).Value.ToString());
-
-    Console.WriteLine("Are these the correct columns? (y/n)");
-    var yn = Console.ReadKey();
-
-    if (yn.Key.ToString() == "n" || yn.Key.ToString() == "N" || yn.Key == ConsoleKey.Escape)
+    if (lookupWorksheet is null)
+    {
+        Log.Error("Lookup worksheet {0} not found in workbook {1}", parameters.LookupWorksheet, parameters.LookupWorkbook);
         return;
+    }
+    IXLRow? lookupLastRowUsed = lookupWorksheet.LastRowUsed();
+    if (lookupLastRowUsed is null)
+    {
+        Log.Error("No used rows found in lookup worksheet");
+        return;
+    }
+    if (parameters.LookupStartRow == 0)
+        parameters.LookupStartRow = parameters.LookupWorksheetHasHeader ? 2 : 1;
 
+    if (parameters.LookupEndRow == 0)
+        parameters.LookupEndRow = lookupLastRowUsed.RowNumber();
+
+    IXLWorksheet searchWorksheet = searchBook.Worksheet(parameters.SearchWorksheet);
+    if (searchWorksheet is null)
+    {
+        Log.Error("Search worksheet {0} not found in workbook {1}", parameters.SearchWorksheet, parameters.SearchWorkbook);
+        return;
+    }
+    IXLRow? searchLastRowUsed = searchWorksheet.LastRowUsed();
+    if (searchLastRowUsed is null)
+    {
+        Log.Error("No used rows found in search worksheet");
+        return;
+    }
+    if (parameters.SearchStartRow == 0)
+        parameters.SearchStartRow = parameters.SearchWorksheetHasHeader ? 2 : 1;
+    if (parameters.SearchEndRow == 0)
+        parameters.SearchEndRow = searchLastRowUsed.RowNumber();
+
+    if (parameters.LookupWorksheetHasHeader)
+    {
+        Log.Information("Look Column: {0}", lookupWorksheet.Cell(1, parameters.LookupColumn).Value.ToString());
+        Log.Information("Output Column: {0}", lookupWorksheet.Cell(1, parameters.LookupOutputColumn).Value.ToString());
+    }
+    if (parameters.SearchWorksheetHasHeader)
+    {
+        Log.Information("Search Column: {0}", searchWorksheet.Cell(1, parameters.SearchColumn).Value.ToString());
+        Log.Information("Result Column: {0}", searchWorksheet.Cell(1, parameters.SearchResultColumn).Value.ToString());
+    }
+    Log.Information("Lookup rows {0} to {1}", parameters.LookupStartRow, parameters.LookupEndRow);
+    Log.Information("Search rows {0} to {1}", parameters.SearchStartRow, parameters.SearchEndRow);   
+    
     for (int row = parameters.LookupEndRow; row > parameters.LookupStartRow - 1; row--)
     {
         string imei = lookupWorksheet.Cell(row, parameters.LookupColumn).Value.ToString();
